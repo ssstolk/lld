@@ -1,0 +1,24 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:concepts>
+INSERT {
+    # additional triples for an ontolex:LexicalConcept 
+    ?tgtConcept skos:related ?tgtReferredConcept .
+}
+USING <urn:toe:input:category-xref>
+WHERE {
+    # catid
+    ?xref ?p_catid ?catid .
+    FILTER (STRENDS(LCASE(STR(?p_catid)), "catid")) .
+    BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
+    
+    # refid
+    ?xref ?p_refid ?refid .
+    FILTER (STRENDS(LCASE(STR(?p_refid)), "refid")) .
+    BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?refid))) AS ?tgtReferredConcept) .
+ }

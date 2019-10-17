@@ -1,0 +1,31 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX gold: <http://purl.org/linguistics/gold/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:senses>
+DELETE {
+    ?sense ontolex:isSenseOf ?entry2 .
+}
+INSERT {
+    ?sense ontolex:isSenseOf ?entry1 .
+}
+USING <urn:toe:senses>
+WHERE {
+    ?sense ontolex:isSenseOf ?entry2 .
+    ?entry2 owl:sameAs|^owl:sameAs ?entry1 .
+    
+    BIND(STRDT(STRAFTER(STR(?entry1), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entry1id) .
+    BIND(STRDT(STRAFTER(STR(?entry2), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entry2id) .
+    FILTER (?entry1id < ?entry2id) .
+    
+    FILTER NOT EXISTS {
+        ?entry2 owl:sameAs|^owl:sameAs ?entry1 .
+        ?entry2 owl:sameAs|^owl:sameAs ?entryBefore1.
+        BIND(STRDT(STRAFTER(STR(?entry1), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entry1id) .
+        BIND(STRDT(STRAFTER(STR(?entryBefore1), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entryBefore1id) .
+        FILTER (?entryBefore1id < ?entry1id) .
+    }
+}

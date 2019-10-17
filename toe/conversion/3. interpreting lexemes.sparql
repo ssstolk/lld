@@ -1,0 +1,120 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX gold: <http://purl.org/linguistics/gold/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:senses>
+INSERT {
+    ?tgtSense a ontolex:LexicalSense .
+    ?tgtSense ontolex:isLexicalizedSenseOf ?tgtConcept .
+    ?tgtSense skos:prefLabel ?tgtLabel .
+    ?tgtSense ontolex:isSenseOf ?tgtEntry .
+    
+    ## Need to obtain pos from the Category CSV for the below to work. See first BIND statement.
+    ?tgtEntry a ontolex:LexicalEntry .
+    ?tgtEntry skos:prefLabel ?tgtEntryLabel .
+    ?tgtEntry toe:orderLabel ?tgtOrderLabel .
+    ?tgtEntry a ?tgtPartOfSpeech .
+    ?tgtEntry a ?tgtEntryDistribution .
+}
+USING <urn:toe:input:lexeme>
+USING NAMED <urn:toe:input:category>
+WHERE {
+    BIND (<urn:toe:input:category> AS ?graphTOECategory) .
+
+    # lid
+    ?lexeme ?p_lid ?lid .
+    FILTER (STRENDS(LCASE(STR(?p_lid)), "lid")) .
+    BIND (URI(CONCAT(STR(toe:), "sense/#id=", STR(?lid))) AS ?tgtSense) .
+
+    # catid
+    ?lexeme ?p_catid ?catid .
+    FILTER (STRENDS(LCASE(STR(?p_catid)), "catid")) .
+    BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
+
+    # obtain ?pos from categories CSV
+    OPTIONAL {
+        GRAPH ?graphTOECategory {
+            ?category ?pc_catid ?catid .
+            ?category ?pc_pos ?pos .
+            FILTER (STRENDS(STR(?pc_catid), "catid")) .
+            FILTER (STRENDS(STR(?pc_pos), "pos")) .
+            BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
+            BIND (URI(CONCAT(STR(toe:), "pos/#", STR(?pos))) AS ?tgtPartOfSpeech) .
+        }
+    }
+    
+    # word
+    ?lexeme ?p_word ?word .
+    FILTER (STRENDS(LCASE(STR(?p_word)), "word")) .
+    BIND (STRLANG(?word, "ang") AS ?tgtLabel) .
+    BIND (
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(
+        REPLACE(  # these patterns can be tested at http://rubular.com/
+        REPLACE(?tgtLabel, "^\\(ge\\)", ""),   # prefix that is optional and hence discarded in ordering
+                           "æ", "ae"),    # symbols that needs to be positioned elsewhere
+                           "þ", "th"),
+                           "ā", "a_"),    # vowels with length marks that should be positioned after counterparts without such a mark
+                           "ǣ", "ae_"),
+                           "ē", "e_"), 
+                           "ī", "i_"),
+                           "ō", "o_"),
+                           "ū", "u_"),
+                           "ȳ", "y_"),
+                           "[()]", "")   # parentheses are discarded in ordering
+        AS ?tgtOrderLabel) .
+    BIND (?tgtLabel AS ?tgtEntryLabel) .
+#    BIND (STRLANG(CONCAT(STR(?tgtLabel), ", ", STR(?pos), "."), "ang") AS ?tgtEntryLabelPOS) .
+#    BIND (MD5(CONCAT(STR(?tgtEntryLabelPOS), "lid:", STR(?lid))) AS ?entryid) .
+#    BIND (URI(CONCAT(STR(toe:), "entry/#id=MD5-", STR(?entryid))) AS ?tgtEntry) .
+    BIND (URI(CONCAT(STR(toe:), "entry/#id=", STR(?lid))) AS ?tgtEntry) .
+    
+    # catorder
+    OPTIONAL {
+        ?lexeme ?p_catorder ?catorder .
+        FILTER (STRENDS(LCASE(STR(?p_catorder)), "catorder")) .
+        ## The order of words is a presentation matter and can be deduced from the words themselves. See ?tgtOrderLabel, which assists in the matter.
+    }
+    
+    # oflag
+    OPTIONAL {
+        ?lexeme ?p_oflag ?oflag .
+        FILTER (STRENDS(LCASE(STR(?p_oflag)), "oflag")) .
+        FILTER (?oflag = "Y" || ?oflag = "y") .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "o")) AS ?tgtEntryDistribution) .
+    }
+    
+    # pflag
+    OPTIONAL {
+        ?lexeme ?p_pflag ?pflag .
+        FILTER (STRENDS(LCASE(STR(?p_pflag)), "pflag")) .
+        FILTER (?pflag = "Y" || ?pflag = "y") .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "p")) AS ?tgtEntryDistribution) .
+    }
+    
+    # gflag
+    OPTIONAL {
+        ?lexeme ?p_gflag ?gflag .
+        FILTER (STRENDS(LCASE(STR(?p_gflag)), "gflag")) .
+        FILTER (?gflag = "Y" || ?gflag = "y") .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "g")) AS ?tgtEntryDistribution) .
+    }
+    
+    # qflag
+    OPTIONAL {
+        ?lexeme ?p_qflag ?qflag .
+        FILTER (STRENDS(LCASE(STR(?p_qflag)), "qflag")) .
+        FILTER (?qflag = "Y" || ?qflag = "y") .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "q")) AS ?tgtEntryDistribution) .
+    }
+}

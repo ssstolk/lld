@@ -1,0 +1,45 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX gold: <http://purl.org/linguistics/gold/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:senses>
+INSERT {
+    ?entry1 owl:sameAs ?entry2 .
+}
+USING <urn:toe:senses>
+WHERE {
+    ?entry1 skos:prefLabel ?entryLabel .
+    ?entry2 skos:prefLabel ?entryLabel .
+
+    ?entry1 a ontolex:LexicalEntry .
+    ?entry2 a ontolex:LexicalEntry .
+    
+    BIND(STRDT(STRAFTER(STR(?entry1), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entry1id) .
+    BIND(STRDT(STRAFTER(STR(?entry2), CONCAT(STR(toe:),"entry/#id=")), xsd:integer) AS ?entry2id) .
+    FILTER (?entry1id < ?entry2id) .
+  
+    FILTER NOT EXISTS {
+        ?entry1 a ?entryType1 .
+        ?entry1 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        ?entry2 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        FILTER NOT EXISTS {
+            ?entry2 a ?entryType1 .
+            ?entry1 a ontolex:LexicalEntry . # redundancy needed for subpattern
+            ?entry2 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        }
+    }
+  
+    FILTER NOT EXISTS {
+        ?entry2 a ?entryType2 .
+        ?entry1 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        ?entry2 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        FILTER NOT EXISTS {
+            ?entry1 a ?entryType2 .
+            ?entry1 a ontolex:LexicalEntry . # redundancy needed for subpattern
+            ?entry2 a ontolex:LexicalEntry . # redundancy needed for subpattern
+        }
+    }
+}

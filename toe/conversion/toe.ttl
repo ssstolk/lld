@@ -1,0 +1,171 @@
+﻿@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>  .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ontolex: <http://www.w3.org/ns/lemon/ontolex#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix tree: <https://w3id.org/lemon-tree#> .
+@prefix gold: <http://purl.org/linguistics/gold/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix toe: <http://oldenglishthesaurus.arts.gla.ac.uk/> .
+@prefix toeLvl: <http://oldenglishthesaurus.arts.gla.ac.uk/categoryType/#id=> .
+@prefix toePos: <http://oldenglishthesaurus.arts.gla.ac.uk/pos/#> .
+@prefix toeDist: <http://oldenglishthesaurus.arts.gla.ac.uk/distribution/#> .
+@prefix toeActor: <http://oldenglishthesaurus.arts.gla.ac.uk/actor/#> .
+
+
+
+# overall
+toe: a owl:Ontology ;
+    dcterms:rights "Copyright © 2017 University of Glasgow"@en ;
+    dcterms:rightsHolder <https://www.gla.ac.uk/> ;
+    cc:license "The dataset of A Thesaurus of Old English is copyright of the University of Glasgow. This dataset is made available to you via license holding websites. These sites make available that data to you for non-commercial research purposes (such as private reference, personal research, and the provision of teaching materials). You may not use the material from these sites and from this dataset for commercial or for-profit purposes.
+Regardless of your purpose, you are not permitted to use this dataset directly, rather than using the aforementioned websites, to gain access to a significant amount of Thesaurus data. Only limited quantities of data can be made available through these websites, although the amount which can be accessed is more than sufficient for almost all research purposes. Should you be involved in a research project which requires a substantial amount of Thesaurus data, please contact us at arts-thesauri@glasgow.ac.uk . It is explicitly prohibited to use this dataset or the aforementioned websites to systematically obtain large amounts of data.
+Finally, beyond limited extracts of up to a few hundred words which are necessary for your research or teaching, you may not reproduce, copy or transmit any part of this dataset without our prior permission in writing."@en ;
+    dcterms:creator toeActor:JaneRoberts , toeActor:ChristianKay , toeActor:LynneGrundy ;
+.
+
+toe:lexicon
+    dcterms:rights "Copyright © 2017 University of Glasgow"@en ;
+    dcterms:rightsHolder <https://www.gla.ac.uk/> ;
+    cc:license "The dataset of A Thesaurus of Old English is copyright of the University of Glasgow. This dataset is made available to you via license holding websites. These sites make available that data to you for non-commercial research purposes (such as private reference, personal research, and the provision of teaching materials). You may not use the material from these sites and from this dataset for commercial or for-profit purposes.
+Regardless of your purpose, you are not permitted to use this dataset directly, rather than using the aforementioned websites, to gain access to a significant amount of Thesaurus data. Only limited quantities of data can be made available through these websites, although the amount which can be accessed is more than sufficient for almost all research purposes. Should you be involved in a research project which requires a substantial amount of Thesaurus data, please contact us at arts-thesauri@glasgow.ac.uk . It is explicitly prohibited to use this dataset or the aforementioned websites to systematically obtain large amounts of data.
+Finally, beyond limited extracts of up to a few hundred words which are necessary for your research or teaching, you may not reproduce, copy or transmit any part of this dataset without our prior permission in writing."@en ;
+    dcterms:creator toeActor:JaneRoberts , toeActor:ChristianKay , toeActor:LynneGrundy ;
+.
+
+
+
+# actors
+toeActor:JaneRoberts a foaf:Person ;
+    rdf:value "Jane Roberts" ;
+.
+
+toeActor:ChristianKay a foaf:Person ;
+    rdf:value "Christian Kay" ;
+.
+
+toeActor:LynneGrundy a foaf:Person ;
+    rdf:value "Lynne Grundy" ;
+.
+
+
+
+# properties
+toe:orderLabel  a  rdf:Property, owl:AnnotationProperty ;
+    skos:prefLabel "order label"@en ;
+    skos:definition "A hidden label for the purpose of ordering alphabetically."@en ;
+    rdfs:subPropertyOf skos:hiddenLabel ;
+.
+
+toe:etymologyNote  a  rdf:Property, owl:AnnotationProperty ;
+    skos:prefLabel "etymology note"@en ;
+    skos:definition "A note that captures etymology."@en ;
+    rdfs:subPropertyOf skos:note ;
+.
+
+toe:pos  a  owl:Class ;
+    skos:prefLabel "POS item"@en ;
+    owl:equivalentClass gold:PartOfSpeechProperty ;
+.
+
+toe:distribution  a  owl:Class ;
+    skos:prefLabel "Distributed item"@en ;
+.
+
+
+
+# parts of speech (in order)
+toePos:n  a  owl:Class ;
+    skos:prefLabel "noun"@en ;
+    skos:notation "n"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Noun ;
+.
+toePos:pn  a  owl:Class ;
+    skos:prefLabel "pronoun"@en ;
+    skos:notation "pn"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Pronominal ;
+.
+toePos:aj  a  owl:Class ;
+    skos:prefLabel "adjective"@en ;
+    skos:notation "aj"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Adjectival ;
+.
+toePos:av  a  owl:Class ;
+    skos:prefLabel "adverb"@en ;
+    skos:notation "av"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Adverbial ;
+.
+toePos:v  a  owl:Class ;
+    skos:prefLabel "verb"@en ;
+    skos:notation "v"@en;
+    rdfs:subClassOf toe:pos ;
+    rdfs:subClassOf gold:Predicator ;
+.
+toePos:vi  a  owl:Class ;
+    skos:prefLabel "intransitive verb"@en ;
+    skos:notation "vi"@en;
+    rdfs:subClassOf toePos:v ;
+    owl:equivalentClass gold:IntransitiveVerb ;
+.
+toePos:vt   a  owl:Class ;
+    skos:prefLabel "transitive verb"@en ;
+    skos:notation "vt"@en;
+    rdfs:subClassOf toePos:v ;
+    owl:equivalentClass [ a owl:Class ; owl:unionOf (gold:TransitiveVerb gold:IntransitiveVerb) ] ;
+.
+toePos:ph  a  owl:Class ;
+    skos:prefLabel "phrase"@en ;
+    skos:notation "ph"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Phrase ;
+.
+toePos:in  a  owl:Class ;
+    skos:prefLabel "interjection"@en ;
+    skos:notation "in"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Interjection ;
+.
+toePos:cj  a  owl:Class ;
+    skos:prefLabel "conjunction"@en ;
+    skos:notation "cj"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Conjunction ;
+.
+toePos:p  a  owl:Class ;
+    skos:prefLabel "preposition"@en ;
+    skos:notation "p"@en;
+    rdfs:subClassOf toe:pos ;
+    owl:equivalentClass gold:Preposition ;
+.
+
+
+
+# distribution flags
+toeDist:g  a  owl:Class ;
+    skos:prefLabel "glosses"@en ;
+    skos:notation "g"@en;
+    skos:definition "Item found in glosses."@en ;
+    rdfs:subClassOf toe:distribution ;
+.
+toeDist:p  a  owl:Class ;
+    skos:prefLabel "poetry"@en ;
+    skos:notation "p"@en;
+    skos:definition "Item found in poetry."@en ;
+    rdfs:subClassOf toe:distribution ;
+.
+toeDist:o  a  owl:Class ;
+    skos:prefLabel "rare"@en ;
+    skos:notation "o"@en;
+    skos:definition "Item occurrence is extremely low (e.g., a single attestation)."@en ;
+    rdfs:subClassOf toe:distribution ;
+.
+toeDist:q  a  owl:Class ;
+    skos:prefLabel "questionable"@en ;
+    skos:notation "q"@en;
+    skos:definition "Existence of this item is questionable."@en ;
+    rdfs:subClassOf toe:distribution ;
+.

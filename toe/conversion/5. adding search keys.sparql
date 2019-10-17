@@ -1,0 +1,33 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+WITH <urn:toe:searchKeys>
+INSERT {
+  ?tgtX skos:hiddenLabel ?tgtHiddenLabel .
+}
+USING <urn:toe:concepts>
+USING <urn:toe:senses>
+WHERE {
+  ?tgtX a ?tgtType .
+  VALUES ?tgtType { ontolex:LexicalSense ontolex:LexicalConcept }
+  ?tgtX skos:prefLabel ?tgtLabel .
+  
+  BIND (CONCAT(" ", STR(LCASE(?tgtLabel)), " ") AS ?step1) .
+  BIND (REPLACE(?step1, "\\(\\-[^\\)]*\\)", "") AS ?step2) .
+  BIND (REPLACE(?step2, "/-[^\\s]*\\s", "") AS ?step4) .
+  BIND (REPLACE(?step4, " '", " ") AS ?step5) .
+  BIND (REPLACE(?step5, "' ", " ") AS ?step6) .
+  BIND (REPLACE(?step6, "\\?", "") AS ?step7) .
+  BIND (REPLACE(?step7, ",", "") AS ?step8) .
+  BIND (REPLACE(?step8, "etc\\.", "") AS ?step9) .
+  BIND (REPLACE(?step9, "\\.", "") AS ?step11) .
+#  BIND (REPLACE(REPLACE(?step10, "\\s\\(", " "), "\\)\\s", " ") AS ?step11) .
+  BIND (?step11 AS ?step12) . # TODO?
+  BIND (REPLACE(?step12, "/", " ") AS ?step13) .
+  BIND (REPLACE(?step13, "-", " ") AS ?step14) .
+  BIND (REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(?step14, "ā", "a"),"ǣ","æ"),"ē","e"),"ī","i"),"ō","o"),"ū","u"),"ӯ","y") AS ?step14noLengthMarks) .
+  BIND (IF(?step14 = ?step14noLengthMarks, ?step14, CONCAT(?step14, " ", ?step14noLengthMarks)) AS ?step15) .
+  BIND (REPLACE(?step15, "  ", " ") AS ?step16) .
+  BIND (?step16 AS ?tgtHiddenLabel) .
+}

@@ -1,0 +1,54 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:concepts>
+INSERT {
+    # additional triples for an ontolex:LexicalConcept 
+    ?s skos:broader ?broaderConcept .
+    ?s skos:topConceptOf ?topOfScheme .
+    
+    # additional triples for a toe:ConceptualLevel
+    ?s skos:prefLabel ?conceptualLevelLabel .
+    
+    # triples for the lexicon
+    toe:lexicon a skos:ConceptScheme .
+    toe:lexicon skos:prefLabel "Thesaurus of Old English"@en .
+    toe:lexicon tree:conceptualLevels toe:ConceptualLevels .
+    
+    toe:ConceptualLevels a rdf:List .
+    toe:ConceptualLevels skos:prefLabel "Conceptual levels of the Thesaurus of Old English"@en .
+    toe:ConceptualLevels rdf:first ?conceptualLevel0 .
+    toe:ConceptualLevels rdf:rest toe:ConceptualLevels-subList1 .
+    toe:ConceptualLevels-subList1 a rdf:List .
+    toe:ConceptualLevels-subList1 rdf:first ?conceptualLevel1 .
+    toe:ConceptualLevels-subList1 rdf:rest rdf:nil .
+}
+WHERE {
+    ?s ?p ?o .
+    
+    OPTIONAL {
+        ?s a ontolex:LexicalConcept .
+        ?s skos:notation ?tgtNotation .
+        FILTER (STRLEN(?tgtNotation)>2) .
+        BIND (SUBSTR(?tgtNotation,1,STRLEN(?tgtNotation)-3) AS ?broaderConceptNotation) .
+        ?broaderConcept skos:notation ?broaderConceptNotation .
+    }
+    OPTIONAL {
+        ?s a ontolex:LexicalConcept .
+        ?s skos:notation ?tgtNotation .
+        FILTER (STRLEN(?tgtNotation)<=2) .
+        BIND (toe:lexicon AS ?topOfScheme) .
+    }
+    
+    OPTIONAL {
+        ?s a tree:ConceptualLevel .
+        ?s tree:conceptualDepth ?conceptualLevelDepth .
+        BIND (STRLANG(if(?conceptualLevelDepth>1, "Subcategories", "Categories"), "en") AS ?conceptualLevelLabel) .
+    }
+    BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", "0")) AS ?conceptualLevel0) .
+    BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", "1")) AS ?conceptualLevel1) .
+}

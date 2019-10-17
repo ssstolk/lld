@@ -1,0 +1,23 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX gold: <http://purl.org/linguistics/gold/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:senses>
+DELETE {
+    ?tgtEntryEmpty ?p ?o .
+    ?tgtEntrySameAs owl:sameAs ?tgtEntryEmpty .
+}
+USING <urn:toe:senses>
+WHERE {
+    ?tgtEntryEmpty a ontolex:LexicalEntry .
+    FILTER NOT EXISTS {
+        ?sense ontolex:isSenseOf ?tgtEntryEmpty .
+    }
+    ?tgtEntryEmpty ?p ?o .
+    OPTIONAL {
+        ?tgtEntrySameAs owl:sameAs ?tgtEntryEmpty .
+    }
+}

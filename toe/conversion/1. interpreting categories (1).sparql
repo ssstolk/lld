@@ -1,0 +1,42 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:concepts>
+INSERT {
+    ?tgtConcept a ontolex:LexicalConcept .
+    ?tgtConcept skos:inScheme toe:lexicon .
+    ?tgtConcept skos:prefLabel ?tgtLabel .
+
+    ?tgtConceptualLevel a tree:ConceptualLevel .
+    ?tgtConceptualLevel tree:conceptualDepth  ?tgtConceptualDepth .
+    ?tgtConceptualLevel skos:member ?tgtConcept .
+}
+USING <urn:toe:input:category>
+WHERE {
+    # catid
+    ?category ?p_catid ?catid .
+    FILTER (STRENDS(LCASE(STR(?p_catid)), "catid")) .
+    BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
+    
+    # subcat
+    OPTIONAL {
+        ?category ?p_subcat ?subcat .
+        FILTER (STRENDS(LCASE(STR(?p_subcat)), "subcat")) .
+    }
+    BIND (STRDT(if(bound(?subcat), "1", "0"), xsd:integer) AS ?tgtConceptualDepth) .
+    BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", STR(?tgtConceptualDepth))) AS ?tgtConceptualLevel) .
+
+    # pos
+    OPTIONAL {
+        ?category ?p_pos ?pos .
+        FILTER (STRENDS(LCASE(STR(?p_pos)), "pos")) .
+    }
+    
+    # heading
+    ?category ?p_heading ?heading .
+    FILTER (STRENDS(LCASE(STR(?p_heading)), "heading")) .
+    BIND (STRLANG(?heading, "en") AS ?tgtLabel) .
+}

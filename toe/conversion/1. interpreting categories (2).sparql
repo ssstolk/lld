@@ -1,0 +1,36 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+WITH <urn:toe:concepts>
+INSERT {
+    ?tgtConcept skos:notation ?tgtNotation .
+}
+USING <urn:toe:input:category>
+WHERE {
+    # catid
+    ?category ?p_catid ?catid .
+    FILTER (STRENDS(LCASE(STR(?p_catid)), "catid")) .
+    BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
+    
+    {
+        SELECT ?category (GROUP_CONCAT(?tXdd; separator=".") as ?tString)
+        WHERE {
+            ?category ?p_tX ?tX . 
+            FILTER (REGEX(LCASE(STR(?p_tX)), "t[0-9]$")) .
+            BIND (if(STRLEN(STR(?tX))=1,CONCAT("0",STR(?tX)),STR(?tX)) AS ?tXdd) .
+        }
+        GROUP BY ?category
+        ORDER BY ?p_tX
+    }
+    
+    # subcat
+    OPTIONAL {
+        ?category ?p_subcat ?subcat .
+        FILTER (STRENDS(LCASE(STR(?p_subcat)), "subcat")) .
+        BIND (if((STRLEN(STR(?subcat))=1 || CONTAINS(SUBSTR(STR(?subcat),1,2),".")), CONCAT("0",STR(?subcat)), STR(?subcat)) AS ?subcatString) .
+    }
+    BIND (if(bound(?subcatString), CONCAT(?tString, "/", ?subcatString), ?tString) AS ?tgtNotation) .
+}
