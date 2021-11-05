@@ -14,10 +14,10 @@ preferred-citation:
     orcid: "https://orcid.org/0000-0003-2254-6613"
   conference:
     name: "eLex 2019"
-	date-start: "2019-10-01"
-	date-end: "2019-10-03"
-	city: Sintra
-	country: PT
+    date-start: "2019-10-01"
+    date-end: "2019-10-03"
+    city: Sintra
+    country: PT
   collection-title: "Proceedings of eLex 2019"
   start: 223 # First page number
   end: 247 # Last page number
