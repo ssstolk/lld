@@ -1,11 +1,8 @@
-# lld
-Repository for linguistic linked data and transformation tooling
+# toe-lld
+Repository for *TOE*-LLD, the Linguistic Linked Data version of *A Thesaurus of Old English*.
 
-### toe
+Details on this Linguistic Linked Data form of the thesaurus, and the conversion process involved, can be found in the following paper:
+S. Stolk, ‘*A Thesaurus of Old English* as Linguistic Linked Data: Using OntoLex, SKOS and *lemon-tree* to Bring Topical
+Thesauri to the Semantic Web ’, In *Proceedings of eLex2019*, Sintra, 1–3 October 2019. https://elex.link/elex2019/wp-content/uploads/2019/09/eLex_2019_13.pdf . 
 
-The subdirectory toe contains resources surrounding A Thesaurus of Old English.
-This thesaurus is the property of University of Glasgow. 
-Currently, the toe directory contains conversion tooling for converting its original tabular form (in CSV) to linguistic linked data.
-
-More details on the linguistic linked data form and the conversion process, can be found in the following paper:
-S. Stolk, ‘A Thesaurus of Old English as Linguistic Linked Data’, Proceedings of eLex2019, Sintra, 1–3 October 2019. https://elex.link/elex2019/wp-content/uploads/2019/09/eLex_2019_13.pdf . 
+*A Thesaurus of Old English* is the property of the University of Glasgow. This repository therefore contains only the code used in converting the original, tabular form of the thesaurus (in CSV) to its Linguistic Linked Data form. The resulting resource is made available for browsing in the web application Evoke (http://evoke.ullet.net).

@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Stolk"
+  given-names: "Sander"
+  orcid: "https://orcid.org/0000-0003-2254-6613"
+title: "TOE-LLD"
+url: "https://github.com/ssstolk/toe-lld"
+preferred-citation:
+  type: conference-paper
+  authors:
+  - family-names: "Stolk"
+    given-names: "Sander"
+    orcid: "https://orcid.org/0000-0003-2254-6613"
+  conference:
+    name: "eLex 2019"
+	date-start: "2019-10-01"
+	date-end: "2019-10-03"
+	city: Sintra
+	country: PT
+  collection-title: "Proceedings of eLex 2019"
+  start: 223 # First page number
+  end: 247 # Last page number
+  title: "*A Thesaurus of Old English* as Linguistic Linked Data: Using OntoLex, SKOS and *lemon-tree* to Bring Topical Thesauri to the Semantic Web"
+  year: 2019
+  url: "https://elex.link/elex2019/wp-content/uploads/2019/09/eLex_2019_13.pdf"

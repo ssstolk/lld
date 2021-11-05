@@ -47,7 +47,7 @@ WHERE {
     OPTIONAL {
         ?s a tree:ConceptualLevel .
         ?s tree:conceptualDepth ?conceptualLevelDepth .
-        BIND (STRLANG(if(?conceptualLevelDepth>1, "Subcategories", "Categories"), "en") AS ?conceptualLevelLabel) .
+        BIND (STRLANG(if(?conceptualLevelDepth>0, "Subcategories", "Categories"), "en") AS ?conceptualLevelLabel) .
     }
     BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", "0")) AS ?conceptualLevel0) .
     BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", "1")) AS ?conceptualLevel1) .

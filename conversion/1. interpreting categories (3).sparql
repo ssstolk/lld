@@ -1,0 +1,45 @@
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX tree: <https://w3id.org/lemon-tree#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX toe: <http://oldenglishthesaurus.arts.gla.ac.uk/>
+
+# Fix on TOE dataset, where the taxonomy occasionally lacks subcategories
+#   that ought to be there (as evidenced by existing codes/notations). 
+# Such missing concepts are added with 
+#   - the following id in their URI: "bnode-<notation>"
+#   - the following label: <notation>
+
+WITH <urn:toe:concepts>
+INSERT {
+    ?tgtConcept a ontolex:LexicalConcept .
+    ?tgtConcept skos:inScheme toe:lexicon .
+    ?tgtConcept skos:prefLabel ?tgtLabel .
+
+    ?tgtConceptualLevel a tree:ConceptualLevel .
+    ?tgtConceptualLevel tree:conceptualDepth  ?tgtConceptualDepth .
+    ?tgtConceptualLevel skos:member ?tgtConcept .
+
+    ?tgtConcept skos:notation ?tgtNotation .
+}
+USING <urn:toe:concepts>
+WHERE {
+    ?s a ontolex:LexicalConcept .
+	?s skos:notation ?notation .
+	FILTER (STRLEN(?notation)>2) .
+	BIND (SUBSTR(?notation,1,STRLEN(?notation)-3) AS ?tgtNotation) .
+	
+	FILTER NOT EXISTS {
+		?s a ontolex:LexicalConcept .
+		?s skos:notation ?notation .
+		FILTER (STRLEN(?notation)>2) .
+		BIND (SUBSTR(?notation,1,STRLEN(?notation)-3) AS ?tgtNotation) .
+		?broaderConcept skos:notation ?tgtNotation .
+	}
+	
+	BIND (URI(CONCAT(STR(toe:), "category/#id=", "bnode-", STR(?tgtNotation))) AS ?tgtConcept) .
+	BIND (STR(?tgtNotation) AS ?tgtLabel) .
+	
+	BIND (STRDT(if(contains(?tgtNotation, "/"), "1", "0"), xsd:integer) AS ?tgtConceptualDepth) .
+    BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", STR(?tgtConceptualDepth))) AS ?tgtConceptualLevel) .
+}

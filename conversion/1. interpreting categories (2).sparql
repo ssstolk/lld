@@ -16,11 +16,10 @@ WHERE {
     BIND (URI(CONCAT(STR(toe:), "category/#id=", STR(?catid))) AS ?tgtConcept) .
     
     {
-        SELECT ?category (GROUP_CONCAT(?tXdd; separator=".") as ?tString)
+        SELECT ?category (GROUP_CONCAT(?tX; separator=".") as ?tString)
         WHERE {
             ?category ?p_tX ?tX . 
             FILTER (REGEX(LCASE(STR(?p_tX)), "t[0-9]$")) .
-            BIND (if(STRLEN(STR(?tX))=1,CONCAT("0",STR(?tX)),STR(?tX)) AS ?tXdd) .
         }
         GROUP BY ?category
         ORDER BY ?p_tX
@@ -30,7 +29,7 @@ WHERE {
     OPTIONAL {
         ?category ?p_subcat ?subcat .
         FILTER (STRENDS(LCASE(STR(?p_subcat)), "subcat")) .
-        BIND (if((STRLEN(STR(?subcat))=1 || CONTAINS(SUBSTR(STR(?subcat),1,2),".")), CONCAT("0",STR(?subcat)), STR(?subcat)) AS ?subcatString) .
     }
-    BIND (if(bound(?subcatString), CONCAT(?tString, "/", ?subcatString), ?tString) AS ?tgtNotation) .
+    BIND (if(bound(?subcat), CONCAT(STR(?tString), "/", STR(?subcat)), STR(?tString)) AS ?position) .
+	BIND (REPLACE(?position, "(?<![0-9])([0-9])(?!([0-9]))", "0$1") AS ?tgtNotation) .
 }

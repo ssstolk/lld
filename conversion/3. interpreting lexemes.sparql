@@ -17,7 +17,10 @@ INSERT {
     ?tgtEntry skos:prefLabel ?tgtEntryLabel .
     ?tgtEntry toe:orderLabel ?tgtOrderLabel .
     ?tgtEntry a ?tgtPartOfSpeech .
-    ?tgtEntry a ?tgtEntryDistribution .
+    ?tgtEntry a ?tgtEntryDistributionO .
+    ?tgtEntry a ?tgtEntryDistributionP .
+    ?tgtEntry a ?tgtEntryDistributionG .
+    ?tgtEntry a ?tgtEntryDistributionQ .
 }
 USING <urn:toe:input:lexeme>
 USING NAMED <urn:toe:input:category>
@@ -91,7 +94,7 @@ WHERE {
         ?lexeme ?p_oflag ?oflag .
         FILTER (STRENDS(LCASE(STR(?p_oflag)), "oflag")) .
         FILTER (?oflag = "Y" || ?oflag = "y") .
-        BIND (URI(CONCAT(STR(toe:), "distribution/#", "o")) AS ?tgtEntryDistribution) .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "o")) AS ?tgtEntryDistributionO) .
     }
     
     # pflag
@@ -99,7 +102,7 @@ WHERE {
         ?lexeme ?p_pflag ?pflag .
         FILTER (STRENDS(LCASE(STR(?p_pflag)), "pflag")) .
         FILTER (?pflag = "Y" || ?pflag = "y") .
-        BIND (URI(CONCAT(STR(toe:), "distribution/#", "p")) AS ?tgtEntryDistribution) .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "p")) AS ?tgtEntryDistributionP) .
     }
     
     # gflag
@@ -107,7 +110,7 @@ WHERE {
         ?lexeme ?p_gflag ?gflag .
         FILTER (STRENDS(LCASE(STR(?p_gflag)), "gflag")) .
         FILTER (?gflag = "Y" || ?gflag = "y") .
-        BIND (URI(CONCAT(STR(toe:), "distribution/#", "g")) AS ?tgtEntryDistribution) .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "g")) AS ?tgtEntryDistributionG) .
     }
     
     # qflag
@@ -115,6 +118,6 @@ WHERE {
         ?lexeme ?p_qflag ?qflag .
         FILTER (STRENDS(LCASE(STR(?p_qflag)), "qflag")) .
         FILTER (?qflag = "Y" || ?qflag = "y") .
-        BIND (URI(CONCAT(STR(toe:), "distribution/#", "q")) AS ?tgtEntryDistribution) .
+        BIND (URI(CONCAT(STR(toe:), "distribution/#", "q")) AS ?tgtEntryDistributionQ) .
     }
 }

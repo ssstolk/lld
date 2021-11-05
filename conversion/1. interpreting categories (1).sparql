@@ -30,10 +30,10 @@ WHERE {
     BIND (URI(CONCAT(STR(toe:), "categoryType/#id=", STR(?tgtConceptualDepth))) AS ?tgtConceptualLevel) .
 
     # pos
-    OPTIONAL {
-        ?category ?p_pos ?pos .
-        FILTER (STRENDS(LCASE(STR(?p_pos)), "pos")) .
-    }
+    #OPTIONAL {
+    #    ?category ?p_pos ?pos .
+    #    FILTER (STRENDS(LCASE(STR(?p_pos)), "pos")) .
+    #}
     
     # heading
     ?category ?p_heading ?heading .
